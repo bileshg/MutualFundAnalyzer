@@ -1,0 +1,312 @@
+# =========================
+# Global / OS
+# =========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary editor backup files
+*~
+*.swp
+*.swo
+.#*
+*.un~
+*.part
+*.orig
+
+# =========================
+# Logs and runtime files
+# =========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log.*
+*.trace
+
+# =========================
+# Environment / secret files
+# =========================
+# dotenv environment variables
+.env
+.env.*.local
+.env.local
+.env.production
+.env.test
+
+# Secret keys, certs
+*.pem
+*.key
+*.crt
+*.p12
+
+# =========================
+# Node / JavaScript
+# =========================
+node_modules/
+jspm_packages/
+# Yarn v2+ Plug'n'Play
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Build outputs
+dist/
+build/
+tmp/
+temp/
+.cache/
+.next/
+.nuxt/
+out/
+public/build/
+
+# Lockfile: keep by default (recommended), uncomment to ignore in special cases
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Coverage
+coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+
+# =========================
+# Python
+# =========================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+pipenv/
+venv.bak/
+venv-*/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Pytest / coverage
+htmlcov/
+.coverage
+.tox/
+.cache/
+.pytest_cache/
+
+# SQLite DB files
+*.sqlite3
+*.db
+*.db-journal
+
+# =========================
+# Java / JVM
+# =========================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.class
+*.project
+*.settings/
+*.idea/
+*.iml
+*.ipr
+
+# Maven / Gradle
+target/
+build/
+out/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Eclipse / IntelliJ
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+*.iws
+
+# =========================
+# .NET / Visual Studio
+# =========================
+bin/
+obj/
+Debug/
+Release/
+TestResults/
+*.user
+*.userosscache
+*.suo
+*.cache
+*.ilk
+*.pdb
+*.idb
+*.sdf
+*.dbmdl
+.vs/
+.vscode/
+*.psess
+*.vsp
+*.vspx
+
+# =========================
+# Go
+# =========================
+# Binaries for programs and plugins
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build cache and packages
+pkg/
+vendor/
+
+# =========================
+# Rust
+# =========================
+target/
+**/*.rs.bk
+Cargo.lock    # For libraries you might want to keep; ignore if you prefer
+
+# =========================
+# Ruby / Rails
+# =========================
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+log/
+tmp/
+db/*.sqlite3
+db/*.sqlite3-journal
+public/system/
+public/uploads/
+coverage/
+spec/examples.txt
+
+# =========================
+# PHP / Composer
+# =========================
+vendor/
+composer.phar
+composer.lock  # Keep for apps; ignore for libraries if desired
+
+# =========================
+# Databases / Data files / Exports
+# =========================
+*.sql
+*.dump
+*.bak
+*.backup
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+*.rar
+
+# Data folders (if you generate or store large test datasets)
+datasets/
+*.csv
+*.tsv
+
+# =========================
+# Docker
+# =========================
+# Ignore local docker-compose.env and secrets
+docker-compose.override.yml
+docker-compose.*.local.yml
+.env.docker
+*.docker.env
+
+# Docker artifacts
+docker-compose.yml.override
+**/Dockerfile.build
+
+# =========================
+# CI / Build server artifacts
+# =========================
+# common CI caches / workspace dirs
+.cache/
+.ci/
+buildkite/
+jenkins/
+.gitlab/
+.github/workflows/*.local.yml
+
+# =========================
+# Editors / IDEs (specific)
+# =========================
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+out/
+
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+# Emacs
+*~
+# Vim
+*.swp
+*.swo
+
+# =========================
+# Generated documentation / site builds
+# =========================
+docs/_build/
+site/
+public/docs/
+
+# =========================
+# Miscellaneous / OS-specific
+# =========================
+# Thumbs, icon caches
+Icon?
+desktop.ini
+._*
+
+# Ignore files that can contain sensitive info or are large
+secrets.yml
+*.pem
+*.p12
+*.pfx
+*.jks
+
+# End of file

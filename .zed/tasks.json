@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Run Streamlit app",
+    "command": "python",
+    "args": ["-m", "streamlit", "run", "Home.py"],
+  },
+  {
+    "label": "Run tests (unittest)",
+    "command": "python",
+    "args": ["-m", "unittest", "discover", "-s", "tests"],
+  },
+  {
+    "label": "Install requirements",
+    "command": "python",
+    "args": ["-m", "pip", "install", "-r", "requirements.txt"],
+  },
+  {
+    "label": "Lint (flake8)",
+    "command": "flake8",
+    "args": ["src", "pages", "tests"],
+  },
+]
