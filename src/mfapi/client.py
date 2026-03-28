@@ -1,5 +1,5 @@
-from typing import List, Optional
 from functools import cache
+from typing import List, Optional
 
 import requests
 

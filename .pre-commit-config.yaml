@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/psf/black
+    rev: 26.3.1
+    hooks:
+      - id: black
+        name: Black Code Formatter
+        language_version: python3
+        additional_dependencies: []
+        args: [--line-length=88]
+        files: ^src/ # Only src folder
+        stages: [pre-commit]
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 8.0.1
+    hooks:
+      - id: isort
+        name: isort Import Sorter
+        args: ["--profile", "black"]
+        files: ^src/ # Only src folder
+        stages: [pre-commit]
+
+  # Ruff for Python linting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.6
+    hooks:
+      - id: ruff-check
+        name: Ruff Linter
+        args: ["--fix"] # Automatically fix issues
+        files: ^src/ # Only src folder
+        stages: [pre-commit]

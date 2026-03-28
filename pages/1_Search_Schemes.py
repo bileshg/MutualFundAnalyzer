@@ -5,12 +5,23 @@ import streamlit as st
 from src.core.state import init_state
 from src.mfapi.client import MFAPIClient
 from src.mfapi.model import NAVHistoryResponse, SchemeSearchResult
-from src.ui.layout import sidebar_watchlist
+from src.ui.layout import analyze_scheme, create_chart_button, sidebar_watchlist
+
+
+def create_watchlist_button(scheme_code: str) -> bool:
+    return st.button(
+        "",
+        icon=":material/bookmark_add:",
+        key=f"watchlist_{scheme_code}",
+        help="Add this scheme to your watchlist for easy access later.",
+    )
 
 
 def render_scheme_details(
     scheme_details: NAVHistoryResponse, expanded: bool = False
 ) -> None:
+    scheme_code_str = str(scheme_details.meta.scheme_code)
+
     with st.expander(
         f'Details for :yellow[**"{scheme_details.meta.scheme_name}"**]',
         expanded=expanded,
@@ -29,15 +40,18 @@ def render_scheme_details(
             st.markdown(scheme_details.data[0].date)
             st.markdown(scheme_details.data[0].nav)
 
-        watchlist_button = st.button(
-            ":green[Add to Watchlist]",
-            key=f"watchlist_{scheme_details.meta.scheme_code}",
-        )
+        with st.container(
+            horizontal=True,
+            horizontal_alignment="right",
+            vertical_alignment="center",
+            gap="small",
+        ):
+            watchlist_button = create_watchlist_button(scheme_code_str)
+            chart_button = create_chart_button("search", scheme_code_str)
 
     if watchlist_button:
-        watchlist_key = str(scheme_details.meta.scheme_code)
-        if watchlist_key not in st.session_state["watchlist"]:
-            st.session_state["watchlist"][watchlist_key] = scheme_details
+        if scheme_code_str not in st.session_state["watchlist"]:
+            st.session_state["watchlist"][scheme_code_str] = scheme_details
             st.success(
                 f'Scheme ":green[**{scheme_details.meta.scheme_name}**]" added to watchlist.'
             )
@@ -46,6 +60,9 @@ def render_scheme_details(
             st.info(
                 f'Scheme ":green[**{scheme_details.meta.scheme_name}**]" is already in the watchlist.'
             )
+
+    if chart_button:
+        analyze_scheme(scheme_code_str)
 
 
 def render_schemes(schemes: list[SchemeSearchResult]) -> None:
@@ -67,6 +84,7 @@ def render_schemes(schemes: list[SchemeSearchResult]) -> None:
                 st.button(
                     f":green[**{scheme.scheme_code}**]",
                     key=f"search_{scheme.scheme_code}",
+                    help=f'Click to view details for "{scheme.scheme_name}"',
                 )
             )
         with name_column:

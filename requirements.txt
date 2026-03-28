@@ -2,4 +2,3 @@ requests
 pydantic
 streamlit
 pandas
-flake8

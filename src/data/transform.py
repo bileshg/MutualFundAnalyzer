@@ -1,6 +1,7 @@
 from typing import List
 
 import pandas as pd
+import streamlit as st
 
 from src.mfapi.model import NAVData
 
@@ -56,3 +57,8 @@ def process_nav_data(nav_data: List[NAVData]) -> pd.DataFrame:
     df = last_n_years_data(df, years=5)
 
     return df
+
+
+@st.cache_data
+def convert_to_csv_data(df: pd.DataFrame) -> bytes:
+    return df.to_csv(index=False).encode("utf-8")
