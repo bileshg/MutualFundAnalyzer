@@ -42,7 +42,9 @@ class TestMFAPIClient(unittest.TestCase):
 
         # Assert
         mock_get.assert_called_once_with(
-            f"{self.client.BASE_URL}/mf/search", params={"q": "test"}
+            f"{self.client.BASE_URL}/mf/search",
+            params={"q": "test"},
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -69,7 +71,9 @@ class TestMFAPIClient(unittest.TestCase):
 
         # Assert
         mock_get.assert_called_once_with(
-            f"{self.client.BASE_URL}/mf", params={"limit": 10, "offset": 0}
+            f"{self.client.BASE_URL}/mf",
+            params={"limit": 10, "offset": 0},
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -103,7 +107,9 @@ class TestMFAPIClient(unittest.TestCase):
 
         # Assert
         mock_get.assert_called_once_with(
-            f"{self.client.BASE_URL}/mf/latest", params={"limit": 5, "offset": 2}
+            f"{self.client.BASE_URL}/mf/latest",
+            params={"limit": 5, "offset": 2},
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
         self.assertIsInstance(result, list)
         self.assertEqual(len(result), 1)
@@ -146,6 +152,7 @@ class TestMFAPIClient(unittest.TestCase):
         mock_get.assert_called_once_with(
             f"{self.client.BASE_URL}/mf/{scheme_code}",
             params={"from": start_date, "to": end_date},
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
         self.assertIsInstance(result, NAVHistoryResponse)
         self.assertEqual(result.status, "SUCCESS")
@@ -181,7 +188,9 @@ class TestMFAPIClient(unittest.TestCase):
 
         # Assert
         mock_get.assert_called_once_with(
-            f"{self.client.BASE_URL}/mf/{scheme_code}/latest"
+            f"{self.client.BASE_URL}/mf/{scheme_code}/latest",
+            params=None,
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
         self.assertIsInstance(result, NAVHistoryResponse)
         self.assertEqual(result.status, "SUCCESS")
@@ -198,7 +207,55 @@ class TestMFAPIClient(unittest.TestCase):
             self.client.search_schemes("should-fail")
 
         mock_get.assert_called_once_with(
-            f"{self.client.BASE_URL}/mf/search", params={"q": "should-fail"}
+            f"{self.client.BASE_URL}/mf/search",
+            params={"q": "should-fail"},
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
+        )
+
+    @patch("src.mfapi.client.requests.get")
+    def test_custom_timeout_is_used(self, mock_get):
+        # Arrange
+        client = MFAPIClient(timeout=2.5)
+        payload = [{"schemeCode": 123, "schemeName": "Test Scheme"}]
+        mock_get.return_value = make_mock_response(payload)
+
+        # Act
+        client.search_schemes("test")
+
+        # Assert
+        mock_get.assert_called_once_with(
+            f"{client.BASE_URL}/mf/search",
+            params={"q": "test"},
+            timeout=2.5,
+        )
+
+    @patch("src.mfapi.client.requests.get")
+    def test_get_nav_data_omits_none_date_params(self, mock_get):
+        # Arrange
+        scheme_code = "1001"
+        payload = {
+            "meta": {
+                "fund_house": "Gamma MF",
+                "scheme_type": "Open Ended Schemes",
+                "scheme_category": "Debt",
+                "scheme_code": 1001,
+                "scheme_name": "Gamma Fund",
+                "isin_growth": None,
+                "isin_div_reinvestment": None,
+            },
+            "data": [{"date": "01-01-2020", "nav": "10.00000"}],
+            "status": "SUCCESS",
+        }
+        mock_get.return_value = make_mock_response(payload)
+
+        # Act
+        self.client.get_nav_data(scheme_code)
+
+        # Assert
+        mock_get.assert_called_once_with(
+            f"{self.client.BASE_URL}/mf/{scheme_code}",
+            params=None,
+            timeout=MFAPIClient.DEFAULT_TIMEOUT,
         )
 
 

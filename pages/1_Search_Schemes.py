@@ -1,11 +1,28 @@
 from typing import Any
 
+import requests
 import streamlit as st
+from pydantic import ValidationError
 
 from src.core.state import init_state
 from src.mfapi.client import MFAPIClient
-from src.mfapi.model import NAVHistoryResponse, SchemeSearchResult
+from src.mfapi.model import NAVHistoryResponse, NAVHistoryStatus, SchemeSearchResult
 from src.ui.layout import analyze_scheme, create_chart_button, sidebar_watchlist
+
+TITLE = "Mutual Fund Analyzer - Search"
+DATA_ERROR_TYPES = (requests.RequestException, ValidationError)
+
+st.set_page_config(page_title=TITLE)
+
+
+@st.cache_data(ttl=3600)
+def cached_search_schemes(query: str) -> list[SchemeSearchResult]:
+    return MFAPIClient().search_schemes(query)
+
+
+@st.cache_data(ttl=3600)
+def cached_get_latest_nav(scheme_code: str) -> NAVHistoryResponse:
+    return MFAPIClient().get_latest_nav(scheme_code)
 
 
 def create_watchlist_button(scheme_code: str) -> bool:
@@ -34,11 +51,15 @@ def render_scheme_details(
             st.markdown("**Latest NAV Date:**")
             st.markdown("**Latest NAV Value:**")
         with value_column:
+            latest_nav = scheme_details.data[0] if scheme_details.data else None
             st.markdown(scheme_details.meta.fund_house or "N/A")
             st.markdown(scheme_details.meta.scheme_type or "N/A")
             st.markdown(scheme_details.meta.scheme_category or "N/A")
-            st.markdown(scheme_details.data[0].date)
-            st.markdown(scheme_details.data[0].nav)
+            st.markdown(latest_nav.date if latest_nav else "N/A")
+            st.markdown(latest_nav.nav if latest_nav else "N/A")
+
+        if scheme_details.status != NAVHistoryStatus.SUCCESS or not scheme_details.data:
+            st.warning("Latest NAV is not available for this scheme right now.")
 
         with st.container(
             horizontal=True,
@@ -96,14 +117,25 @@ def render_schemes(schemes: list[SchemeSearchResult]) -> None:
             buttons[index] = False  # Reset button to avoid re-fetching
 
         if buttons[index]:
-            scheme_details = MFAPIClient().get_latest_nav(scheme.scheme_code)
+            try:
+                scheme_details = cached_get_latest_nav(str(scheme.scheme_code))
+            except DATA_ERROR_TYPES:
+                st.error(
+                    "Unable to load scheme details right now. Please try again later."
+                )
+                continue
             st.session_state[session_state_key] = scheme_details
             render_scheme_details(scheme_details, expanded=True)
 
 
 def render_results(query: str) -> None:
     if query:
-        result = MFAPIClient().search_schemes(query)
+        try:
+            result = cached_search_schemes(query)
+        except DATA_ERROR_TYPES:
+            st.error("Unable to search schemes right now. Please try again later.")
+            return
+
         if result:
             render_schemes(result)
         else:
@@ -117,11 +149,7 @@ def main():
 
     sidebar_watchlist()
 
-    title = "Mutual Fund Analyzer - Search"
-
-    st.set_page_config(page_title=title)
-
-    st.title(title)
+    st.title(TITLE)
     st.write("This is the search page for the Mutual Fund Analyzer application.")
 
     input_column, search_column = st.columns(

@@ -17,22 +17,23 @@ that use camelCase or other naming conventions).
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class MFBaseModel(BaseModel):
     """
     Base model with common configuration for all API models.
-    - allow_population_by_field_name: allow constructing models using Pythonic field names.
+    - populate_by_name: allow constructing models using Pythonic field names.
     - use_enum_values: serialize enums to their values by default.
-    - anystr_strip_whitespace: strip whitespace from string fields.
+    - str_strip_whitespace: strip whitespace from string fields.
     """
 
-    class Config:
-        allow_population_by_field_name = True
-        use_enum_values = True
-        anystr_strip_whitespace = True
-        orm_mode = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        str_strip_whitespace=True,
+        from_attributes=True,
+    )
 
 
 class SchemeSearchResult(MFBaseModel):

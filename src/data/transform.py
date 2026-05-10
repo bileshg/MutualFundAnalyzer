@@ -1,9 +1,14 @@
 from typing import List
 
 import pandas as pd
-import streamlit as st
 
 from src.mfapi.model import NAVData
+
+NAV_ANALYSIS_COLUMNS = ["Date", "NAV", "50_DMA", "200_DMA"]
+
+
+def empty_nav_analysis_df() -> pd.DataFrame:
+    return pd.DataFrame(columns=NAV_ANALYSIS_COLUMNS)
 
 
 def nav_data_to_df(nav_data: List[NAVData]) -> pd.DataFrame:
@@ -11,9 +16,9 @@ def nav_data_to_df(nav_data: List[NAVData]) -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
     if df.empty:
-        return df
+        return pd.DataFrame(columns=["Date", "NAV"])
 
-    df["Date"] = pd.to_datetime(df["Date"], errors="coerce", dayfirst=True)
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce", format="%d-%m-%Y")
     df["NAV"] = pd.to_numeric(df["NAV"], errors="coerce")
     df = df.dropna(subset=["Date", "NAV"]).sort_values("Date")
 
@@ -49,16 +54,15 @@ def last_n_years_data(df: pd.DataFrame, years: int) -> pd.DataFrame:
 def process_nav_data(nav_data: List[NAVData]) -> pd.DataFrame:
     df = nav_data_to_df(nav_data)
     if df.empty:
-        return df
+        return empty_nav_analysis_df()
 
     df = last_n_years_data(df, years=7)
     df = calculate_moving_average(df, window=50)
     df = calculate_moving_average(df, window=200)
     df = last_n_years_data(df, years=5)
 
-    return df
+    return df.reindex(columns=NAV_ANALYSIS_COLUMNS)
 
 
-@st.cache_data
 def convert_to_csv_data(df: pd.DataFrame) -> bytes:
     return df.to_csv(index=False).encode("utf-8")

@@ -1,20 +1,19 @@
 import streamlit as st
+
 from src.core.state import init_state
 from src.ui.layout import sidebar_watchlist
 
-def main():
-    init_state()
 
-    st.set_page_config(
-        page_title="Mutual Fund Analyzer"
-    )
+def main():
+    st.set_page_config(page_title="Mutual Fund Analyzer")
+
+    init_state()
 
     st.write("# Mutual Fund Analyzer")
 
     sidebar_watchlist()
 
-    st.markdown(
-        """
+    st.markdown("""
         This application allows you to analyze mutual funds using data from the MFAPI.
 
         ## Features
@@ -29,8 +28,7 @@ def main():
         - Explore the various functionalities and make informed investment decisions!
 
         ### Happy Investing!
-    """
-    )
+    """)
 
 
 if __name__ == "__main__":

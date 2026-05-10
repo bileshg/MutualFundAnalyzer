@@ -15,7 +15,7 @@ repos:
         language_version: python3
         additional_dependencies: []
         args: [--line-length=88]
-        files: ^src/ # Only src folder
+        files: ^(Home\.py|pages/|src/|tests/)
         stages: [pre-commit]
 
   - repo: https://github.com/PyCQA/isort
@@ -24,7 +24,7 @@ repos:
       - id: isort
         name: isort Import Sorter
         args: ["--profile", "black"]
-        files: ^src/ # Only src folder
+        files: ^(Home\.py|pages/|src/|tests/)
         stages: [pre-commit]
 
   # Ruff for Python linting
@@ -34,5 +34,5 @@ repos:
       - id: ruff-check
         name: Ruff Linter
         args: ["--fix"] # Automatically fix issues
-        files: ^src/ # Only src folder
+        files: ^(Home\.py|pages/|src/|tests/)
         stages: [pre-commit]
